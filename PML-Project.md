@@ -90,6 +90,25 @@ plot(harVal$classe, col="blue", xlab="classe levels in validation dataset", ylab
 ```
 
 ![](./PML-Project_files/figure-html/unnamed-chunk-3-1.png) 
+
+```r
+#Write to PNG file
+dev.copy(png, file = "Plot1.png")
+```
+
+```
+## png 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
 We observe that the distribution of outcomes is similar in both the training and validation datasets.  
 
 ##Model Development for predicting exercise correctness  
@@ -131,6 +150,25 @@ fancyRpartPlot(dtModel)
 ```
 
 ![](./PML-Project_files/figure-html/unnamed-chunk-5-1.png) 
+
+```r
+#Write to PNG file
+dev.copy(png, file = "Plot2.png")
+```
+
+```
+## png 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
 
 ```r
 #Plot confusion matrix

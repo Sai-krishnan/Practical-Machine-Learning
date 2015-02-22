@@ -62,6 +62,10 @@ The core training dataset contains `r nrow(harTrng)` rows and the validation dat
 par(mfrow=c(1,2))
 plot(harTrng$classe, col="blue", xlab="classe levels in Training dataset", ylab="Frequency")
 plot(harVal$classe, col="blue", xlab="classe levels in validation dataset", ylab="Frequency")
+
+#Write to PNG file
+dev.copy(png, file = "Plot1.png")
+dev.off()
 ```
 We observe that the distribution of outcomes is similar in both the training and validation datasets.  
 
@@ -78,6 +82,11 @@ Using Decision Trees algorithm
 dtModel      <- rpart(classe ~ ., data=harTrng, method="class")
 dtPrediction <- predict(dtModel, harVal, type = "class")
 fancyRpartPlot(dtModel)
+
+#Write to PNG file
+dev.copy(png, file = "Plot2.png")
+dev.off()
+
 #Plot confusion matrix
 confusionMatrix(dtPrediction, harVal$classe)
 ```
