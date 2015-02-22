@@ -1,0 +1,126 @@
+---
+title: "Practical Machine Learning - Course Project"
+author: "Sai krishnan"
+date: "Saturday, February 21, 2015"
+output:
+  html_document:
+    keep_md: yes
+---
+##Background  
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. In this project, data from accelerometers on the belt, forearm, arm, and dumbell of the 6 participants was collected. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. Our goal is to build a model based on sensor data to predict whether the lift was performed correctly or not. 
+
+Data Sources  
+
+Training dataset: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv  
+Test dataset: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv  
+
+Outcome variable: "classe"  
+- lift exactly according to the specification (category 'A')  
+- throwing the elbows to the front            (category 'B')  
+- lifting the dumbbell only halfway           (category 'C')  
+- lowering the dumbbell only halfway          (category 'D')  
+- throwing the hips to the front              (category 'E')  
+
+## Data Cleaning & Exploratory Analysis  
+  
+```{r echo=TRUE}
+# Load the training and test datasets from working directory; replace missing values with 'NA'
+harTrain <- read.csv("C:/Users/Admin/Documents/Practical Machine Learning/Project/pml-training.csv",header=TRUE,na.strings=c("NA","")) 
+harTest <- read.csv("C:/Users/Admin/Documents/Practical Machine Learning/Project/pml-testing.csv",header=TRUE,na.strings=c("NA",""))
+
+# Delete columns with missing values
+harTrain <- harTrain[,colSums(is.na(harTrain)) == 0]
+harTest  <-  harTest[,colSums(is.na(harTest))  == 0]
+
+# Since we want to predict the type of lift using only activity monitor data, 
+# the other variables (in columns 1 though 7) are eliminated from the datasets  
+harTrain <- harTrain[,-c(1:7)]
+harTest  <- harTest [,-c(1:7)]
+
+# Compare the sizes of the training and testing datasets  
+dim(harTrain); dim(harTest)
+
+# Summarize the values in the outcome variable (classe) of the training dataset
+summary(harTrain$classe)
+```
+We see that instances of correct lift (classe = 'A') are most (at 5580) as compared to the occurrences of each of the incorrect lifts.  
+
+## Data Preparation  
+The training dataset is fairly large with `r nrow(harTrain)` rows and `r ncol(harTrain)` columns. We partition the training dataset using random sampling without replacement into the following 2 datasets to allow cross validation:  
+- harTrng (80% of training data)    
+- harVal  (20% of training data)  
+
+```{r echo=TRUE}
+library(caret)
+set.seed(12345) # For reproducibility
+inTrain <- createDataPartition(y=harTrain$classe, p=0.80, list=FALSE)
+harTrng <- harTrain[inTrain,]
+harVal  <- harTrain[-inTrain,]
+```  
+The core training dataset contains `r nrow(harTrng)` rows and the validation dataset contains `r nrow(harVal)` rows.  Comparing the the values of the training an validation sets:- 
+```{r echo=TRUE}
+par(mfrow=c(1,2))
+plot(harTrng$classe, col="blue", xlab="classe levels in Training dataset", ylab="Frequency")
+plot(harVal$classe, col="blue", xlab="classe levels in validation dataset", ylab="Frequency")
+```
+We observe that the distribution of outcomes is similar in both the training and validation datasets.  
+
+##Model Development for predicting exercise correctness  
+```{r echo=TRUE}
+#Load required packages
+library(MASS)
+library(rpart)
+library(rpart.plot)
+library(rattle)
+```
+Using Decision Trees algorithm  
+```{r echo=TRUE}
+dtModel      <- rpart(classe ~ ., data=harTrng, method="class")
+dtPrediction <- predict(dtModel, harVal, type = "class")
+fancyRpartPlot(dtModel)
+#Plot confusion matrix
+confusionMatrix(dtPrediction, harVal$classe)
+```
+We observe that the accuracy of the decision trees algorithm is 73.26% with an out of sample error at 26.74%.  
+
+Using Naive Bayes algorithm  
+```{r echo=TRUE}
+library(e1071) #Package required to run Naive Bayes algorithm
+nbModel      <- naiveBayes(classe ~ ., data=harTrng)
+nbPrediction <- predict(nbModel, newdata=harVal)
+#Plot confusion matrix
+confusionMatrix(nbPrediction, harVal$classe)
+```
+The model accuracy drops further to nearly 50% using the Naive Bayes algorithm. The out of sample error is very high in this case at nearly 50%.  
+
+Using Random Forest algorithm  
+```{r echo=TRUE}
+library(randomForest)  #Package required to run random forest algorithm
+set.seed(12345)
+rfModel      <- randomForest(classe ~. , data=harTrng, method="class")
+rfPrediction <- predict(rfModel, harVal, type = "class")
+#Plot confusion matrix
+confusionMatrix(rfPrediction, harVal$classe)
+```
+We observe that the Random Forest algorithm gives the highest prediction accuracy amongst the three models. The model accuracy is 99.34% and the out of sample error is estimated at 0.66% which is the lowest amongst the three models we have tried.  
+
+##Prediction  
+
+We choose the random forest model for prediction as follows:-  
+```{r echo=TRUE}
+prediction <- predict(rfModel, harTest, type="class")
+#Display the 20 predicted values of classe for the test dataset 
+prediction
+#Function to create files for loading data
+pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0("problem_id_",i,".txt")
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+  }
+}
+#Create 20 files with prediction for each test case
+pml_write_files(prediction)
+```
+#References  
+URL: http://groupware.les.inf.puc-rio.br/har  
