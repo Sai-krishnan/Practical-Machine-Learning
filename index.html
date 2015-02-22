@@ -113,7 +113,11 @@ set.seed(<span class="pl-c1">12345</span>) <span class="pl-c"># For reproducibil
 
 <div class="highlight highlight-r"><pre>par(<span class="pl-v">mfrow</span><span class="pl-k">=</span>c(<span class="pl-c1">1</span>,<span class="pl-c1">2</span>))
 plot(<span class="pl-vo">harTrng</span><span class="pl-k">$</span><span class="pl-vo">classe</span>, <span class="pl-v">col</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>blue<span class="pl-pds">"</span></span>, <span class="pl-v">xlab</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>classe levels in Training dataset<span class="pl-pds">"</span></span>, <span class="pl-v">ylab</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>Frequency<span class="pl-pds">"</span></span>)
-plot(<span class="pl-vo">harVal</span><span class="pl-k">$</span><span class="pl-vo">classe</span>, <span class="pl-v">col</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>blue<span class="pl-pds">"</span></span>, <span class="pl-v">xlab</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>classe levels in validation dataset<span class="pl-pds">"</span></span>, <span class="pl-v">ylab</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>Frequency<span class="pl-pds">"</span></span>)</pre></div>
+plot(<span class="pl-vo">harVal</span><span class="pl-k">$</span><span class="pl-vo">classe</span>, <span class="pl-v">col</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>blue<span class="pl-pds">"</span></span>, <span class="pl-v">xlab</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>classe levels in validation dataset<span class="pl-pds">"</span></span>, <span class="pl-v">ylab</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>Frequency<span class="pl-pds">"</span></span>)
+
+<span class="pl-c">#Write to PNG file</span>
+dev.copy(<span class="pl-vo">png</span>, <span class="pl-v">file</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>Plot1.png<span class="pl-pds">"</span></span>)
+dev.off()</pre></div>
 
 <p>We observe that the distribution of outcomes is similar in both the training and validation datasets.  </p>
 
@@ -131,6 +135,11 @@ library(<span class="pl-vo">rattle</span>)</pre></div>
 <div class="highlight highlight-r"><pre><span class="pl-vo">dtModel</span>      <span class="pl-k">&lt;-</span> rpart(<span class="pl-vo">classe</span> <span class="pl-k">~</span> ., <span class="pl-v">data</span><span class="pl-k">=</span><span class="pl-vo">harTrng</span>, <span class="pl-v">method</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>class<span class="pl-pds">"</span></span>)
 <span class="pl-vo">dtPrediction</span> <span class="pl-k">&lt;-</span> predict(<span class="pl-vo">dtModel</span>, <span class="pl-vo">harVal</span>, <span class="pl-v">type</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>class<span class="pl-pds">"</span></span>)
 fancyRpartPlot(<span class="pl-vo">dtModel</span>)
+
+<span class="pl-c">#Write to PNG file</span>
+dev.copy(<span class="pl-vo">png</span>, <span class="pl-v">file</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>Plot2.png<span class="pl-pds">"</span></span>)
+dev.off()
+
 <span class="pl-c">#Plot confusion matrix</span>
 confusionMatrix(<span class="pl-vo">dtPrediction</span>, <span class="pl-vo">harVal</span><span class="pl-k">$</span><span class="pl-vo">classe</span>)</pre></div>
 
