@@ -31,16 +31,11 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <hr>
+        <h1>
+<a id="practical-machine-learning---course-project" class="anchor" href="#practical-machine-learning---course-project" aria-hidden="true"><span class="octicon octicon-link"></span></a>Practical Machine Learning - Course Project</h1>
 
-<p>title: "Practical Machine Learning - Course Project"
-author: "Sai krishnan"
-date: "Saturday, February 21, 2015"
-output:
-  html_document:</p>
-
-<h2>
-<a id="----keep_md-yes" class="anchor" href="#----keep_md-yes" aria-hidden="true"><span class="octicon octicon-link"></span></a>    keep_md: yes</h2>
+<p>Sai krishnan<br>
+Saturday, February 21, 2015  </p>
 
 <h2>
 <a id="background" class="anchor" href="#background" aria-hidden="true"><span class="octicon octicon-link"></span></a>Background</h2>
@@ -84,17 +79,27 @@ Test dataset: <a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-t
 <span class="pl-vo">harTest</span>  <span class="pl-k">&lt;-</span> <span class="pl-vo">harTest</span> [,<span class="pl-k">-</span>c(<span class="pl-c1">1</span><span class="pl-k">:</span><span class="pl-c1">7</span>)]
 
 <span class="pl-c"># Compare the sizes of the training and testing datasets  </span>
-dim(<span class="pl-vo">harTrain</span>); dim(<span class="pl-vo">harTest</span>)
+dim(<span class="pl-vo">harTrain</span>); dim(<span class="pl-vo">harTest</span>)</pre></div>
 
-<span class="pl-c"># Summarize the values in the outcome variable (classe) of the training dataset</span>
+<pre><code>## [1] 19622    53
+</code></pre>
+
+<pre><code>## [1] 20 53
+</code></pre>
+
+<div class="highlight highlight-r"><pre><span class="pl-c"># Summarize the values in the outcome variable (classe) of the training dataset</span>
 summary(<span class="pl-vo">harTrain</span><span class="pl-k">$</span><span class="pl-vo">classe</span>)</pre></div>
+
+<pre><code>##    A    B    C    D    E 
+## 5580 3797 3422 3216 3607
+</code></pre>
 
 <p>We see that instances of correct lift (classe = 'A') are most (at 5580) as compared to the occurrences of each of the incorrect lifts.  </p>
 
 <h2>
 <a id="data-preparation" class="anchor" href="#data-preparation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data Preparation</h2>
 
-<p>The training dataset is fairly large with <code>r nrow(harTrain)</code> rows and <code>r ncol(harTrain)</code> columns. We partition the training dataset using random sampling without replacement into the following 2 datasets to allow cross validation:  </p>
+<p>The training dataset is fairly large with 19622 rows and 53 columns. We partition the training dataset using random sampling without replacement into the following 2 datasets to allow cross validation:  </p>
 
 <ul>
 <li>harTrng (80% of training data)<br>
@@ -103,21 +108,40 @@ summary(<span class="pl-vo">harTrain</span><span class="pl-k">$</span><span clas
 </li>
 </ul>
 
-<div class="highlight highlight-r"><pre>library(<span class="pl-vo">caret</span>)
-set.seed(<span class="pl-c1">12345</span>) <span class="pl-c"># For reproducibility</span>
+<div class="highlight highlight-r"><pre>library(<span class="pl-vo">caret</span>)</pre></div>
+
+<pre><code>## Warning: package 'caret' was built under R version 3.1.2
+</code></pre>
+
+<pre><code>## Loading required package: lattice
+## Loading required package: ggplot2
+</code></pre>
+
+<div class="highlight highlight-r"><pre>set.seed(<span class="pl-c1">12345</span>) <span class="pl-c"># For reproducibility</span>
 <span class="pl-vo">inTrain</span> <span class="pl-k">&lt;-</span> createDataPartition(<span class="pl-v">y</span><span class="pl-k">=</span><span class="pl-vo">harTrain</span><span class="pl-k">$</span><span class="pl-vo">classe</span>, <span class="pl-v">p</span><span class="pl-k">=</span><span class="pl-c1">0.80</span>, <span class="pl-v">list</span><span class="pl-k">=</span><span class="pl-c1">FALSE</span>)
 <span class="pl-vo">harTrng</span> <span class="pl-k">&lt;-</span> <span class="pl-vo">harTrain</span>[<span class="pl-vo">inTrain</span>,]
 <span class="pl-vo">harVal</span>  <span class="pl-k">&lt;-</span> <span class="pl-vo">harTrain</span>[<span class="pl-k">-</span><span class="pl-vo">inTrain</span>,]</pre></div>
 
-<p>The core training dataset contains <code>r nrow(harTrng)</code> rows and the validation dataset contains <code>r nrow(harVal)</code> rows.  Comparing the the values of the training an validation sets:- </p>
+<p>The core training dataset contains 15699 rows and the validation dataset contains 3923 rows.  Comparing the the values of the training an validation sets:- </p>
 
 <div class="highlight highlight-r"><pre>par(<span class="pl-v">mfrow</span><span class="pl-k">=</span>c(<span class="pl-c1">1</span>,<span class="pl-c1">2</span>))
 plot(<span class="pl-vo">harTrng</span><span class="pl-k">$</span><span class="pl-vo">classe</span>, <span class="pl-v">col</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>blue<span class="pl-pds">"</span></span>, <span class="pl-v">xlab</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>classe levels in Training dataset<span class="pl-pds">"</span></span>, <span class="pl-v">ylab</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>Frequency<span class="pl-pds">"</span></span>)
-plot(<span class="pl-vo">harVal</span><span class="pl-k">$</span><span class="pl-vo">classe</span>, <span class="pl-v">col</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>blue<span class="pl-pds">"</span></span>, <span class="pl-v">xlab</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>classe levels in validation dataset<span class="pl-pds">"</span></span>, <span class="pl-v">ylab</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>Frequency<span class="pl-pds">"</span></span>)
+plot(<span class="pl-vo">harVal</span><span class="pl-k">$</span><span class="pl-vo">classe</span>, <span class="pl-v">col</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>blue<span class="pl-pds">"</span></span>, <span class="pl-v">xlab</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>classe levels in validation dataset<span class="pl-pds">"</span></span>, <span class="pl-v">ylab</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>Frequency<span class="pl-pds">"</span></span>)</pre></div>
 
-<span class="pl-c">#Write to PNG file</span>
-dev.copy(<span class="pl-vo">png</span>, <span class="pl-v">file</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>Plot1.png<span class="pl-pds">"</span></span>)
-dev.off()</pre></div>
+<p><img src="./PML-Project_files/figure-html/unnamed-chunk-3-1.png" alt=""> </p>
+
+<div class="highlight highlight-r"><pre><span class="pl-c">#Write to PNG file</span>
+dev.copy(<span class="pl-vo">png</span>, <span class="pl-v">file</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>Plot1.png<span class="pl-pds">"</span></span>)</pre></div>
+
+<pre><code>## png 
+##   3
+</code></pre>
+
+<div class="highlight highlight-r"><pre>dev.off()</pre></div>
+
+<pre><code>## pdf 
+##   2
+</code></pre>
 
 <p>We observe that the distribution of outcomes is similar in both the training and validation datasets.  </p>
 
@@ -127,42 +151,179 @@ dev.off()</pre></div>
 <div class="highlight highlight-r"><pre><span class="pl-c">#Load required packages</span>
 library(<span class="pl-vo">MASS</span>)
 library(<span class="pl-vo">rpart</span>)
-library(<span class="pl-vo">rpart.plot</span>)
-library(<span class="pl-vo">rattle</span>)</pre></div>
+library(<span class="pl-vo">rpart.plot</span>)</pre></div>
+
+<pre><code>## Warning: package 'rpart.plot' was built under R version 3.1.2
+</code></pre>
+
+<div class="highlight highlight-r"><pre>library(<span class="pl-vo">rattle</span>)</pre></div>
+
+<pre><code>## Warning: package 'rattle' was built under R version 3.1.2
+</code></pre>
+
+<pre><code>## Rattle: A free graphical interface for data mining with R.
+## Version 3.4.1 Copyright (c) 2006-2014 Togaware Pty Ltd.
+## Type 'rattle()' to shake, rattle, and roll your data.
+</code></pre>
 
 <p>Using Decision Trees algorithm  </p>
 
 <div class="highlight highlight-r"><pre><span class="pl-vo">dtModel</span>      <span class="pl-k">&lt;-</span> rpart(<span class="pl-vo">classe</span> <span class="pl-k">~</span> ., <span class="pl-v">data</span><span class="pl-k">=</span><span class="pl-vo">harTrng</span>, <span class="pl-v">method</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>class<span class="pl-pds">"</span></span>)
 <span class="pl-vo">dtPrediction</span> <span class="pl-k">&lt;-</span> predict(<span class="pl-vo">dtModel</span>, <span class="pl-vo">harVal</span>, <span class="pl-v">type</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>class<span class="pl-pds">"</span></span>)
-fancyRpartPlot(<span class="pl-vo">dtModel</span>)
+fancyRpartPlot(<span class="pl-vo">dtModel</span>)</pre></div>
 
-<span class="pl-c">#Write to PNG file</span>
-dev.copy(<span class="pl-vo">png</span>, <span class="pl-v">file</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>Plot2.png<span class="pl-pds">"</span></span>)
-dev.off()
+<pre><code>## Warning: labs do not fit even at cex 0.15, there may be some overplotting
+</code></pre>
 
-<span class="pl-c">#Plot confusion matrix</span>
+<p><img src="./PML-Project_files/figure-html/unnamed-chunk-5-1.png" alt=""> </p>
+
+<div class="highlight highlight-r"><pre><span class="pl-c">#Write to PNG file</span>
+dev.copy(<span class="pl-vo">png</span>, <span class="pl-v">file</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>Plot2.png<span class="pl-pds">"</span></span>)</pre></div>
+
+<pre><code>## png 
+##   3
+</code></pre>
+
+<div class="highlight highlight-r"><pre>dev.off()</pre></div>
+
+<pre><code>## pdf 
+##   2
+</code></pre>
+
+<div class="highlight highlight-r"><pre><span class="pl-c">#Plot confusion matrix</span>
 confusionMatrix(<span class="pl-vo">dtPrediction</span>, <span class="pl-vo">harVal</span><span class="pl-k">$</span><span class="pl-vo">classe</span>)</pre></div>
+
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    A    B    C    D    E
+##          A 1003  165    9   77   12
+##          B   21  390   72   23   50
+##          C   36   64  542  101   92
+##          D   33   58   45  408   36
+##          E   23   82   16   34  531
+## 
+## Overall Statistics
+##                                           
+##                Accuracy : 0.7326          
+##                  95% CI : (0.7185, 0.7464)
+##     No Information Rate : 0.2845          
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+##                                           
+##                   Kappa : 0.6604          
+##  Mcnemar's Test P-Value : &lt; 2.2e-16       
+## 
+## Statistics by Class:
+## 
+##                      Class: A Class: B Class: C Class: D Class: E
+## Sensitivity            0.8987  0.51383   0.7924   0.6345   0.7365
+## Specificity            0.9063  0.94753   0.9095   0.9476   0.9516
+## Pos Pred Value         0.7923  0.70144   0.6491   0.7034   0.7741
+## Neg Pred Value         0.9575  0.89041   0.9540   0.9297   0.9413
+## Prevalence             0.2845  0.19347   0.1744   0.1639   0.1838
+## Detection Rate         0.2557  0.09941   0.1382   0.1040   0.1354
+## Detection Prevalence   0.3227  0.14173   0.2128   0.1478   0.1749
+## Balanced Accuracy      0.9025  0.73068   0.8510   0.7910   0.8440
+</code></pre>
 
 <p>We observe that the accuracy of the decision trees algorithm is 73.26% with an out of sample error at 26.74%.  </p>
 
 <p>Using Naive Bayes algorithm  </p>
 
-<div class="highlight highlight-r"><pre>library(<span class="pl-vo">e1071</span>) <span class="pl-c">#Package required to run Naive Bayes algorithm</span>
-<span class="pl-vo">nbModel</span>      <span class="pl-k">&lt;-</span> naiveBayes(<span class="pl-vo">classe</span> <span class="pl-k">~</span> ., <span class="pl-v">data</span><span class="pl-k">=</span><span class="pl-vo">harTrng</span>)
+<div class="highlight highlight-r"><pre>library(<span class="pl-vo">e1071</span>) <span class="pl-c">#Package required to run Naive Bayes algorithm</span></pre></div>
+
+<pre><code>## Warning: package 'e1071' was built under R version 3.1.2
+</code></pre>
+
+<div class="highlight highlight-r"><pre><span class="pl-vo">nbModel</span>      <span class="pl-k">&lt;-</span> naiveBayes(<span class="pl-vo">classe</span> <span class="pl-k">~</span> ., <span class="pl-v">data</span><span class="pl-k">=</span><span class="pl-vo">harTrng</span>)
 <span class="pl-vo">nbPrediction</span> <span class="pl-k">&lt;-</span> predict(<span class="pl-vo">nbModel</span>, <span class="pl-v">newdata</span><span class="pl-k">=</span><span class="pl-vo">harVal</span>)
 <span class="pl-c">#Plot confusion matrix</span>
 confusionMatrix(<span class="pl-vo">nbPrediction</span>, <span class="pl-vo">harVal</span><span class="pl-k">$</span><span class="pl-vo">classe</span>)</pre></div>
+
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction   A   B   C   D   E
+##          A 327  40  15   0  11
+##          B 103 456  57  27 155
+##          C 512 159 494 235  92
+##          D 141  49  86 307 108
+##          E  33  55  32  74 355
+## 
+## Overall Statistics
+##                                         
+##                Accuracy : 0.4943        
+##                  95% CI : (0.4785, 0.51)
+##     No Information Rate : 0.2845        
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16     
+##                                         
+##                   Kappa : 0.3766        
+##  Mcnemar's Test P-Value : &lt; 2.2e-16     
+## 
+## Statistics by Class:
+## 
+##                      Class: A Class: B Class: C Class: D Class: E
+## Sensitivity           0.29301   0.6008   0.7222  0.47745  0.49237
+## Specificity           0.97649   0.8919   0.6919  0.88293  0.93941
+## Pos Pred Value        0.83206   0.5714   0.3311  0.44428  0.64663
+## Neg Pred Value        0.77649   0.9030   0.9218  0.89604  0.89152
+## Prevalence            0.28448   0.1935   0.1744  0.16391  0.18379
+## Detection Rate        0.08335   0.1162   0.1259  0.07826  0.09049
+## Detection Prevalence  0.10018   0.2034   0.3803  0.17614  0.13994
+## Balanced Accuracy     0.63475   0.7463   0.7071  0.68019  0.71589
+</code></pre>
 
 <p>The model accuracy drops further to nearly 50% using the Naive Bayes algorithm. The out of sample error is very high in this case at nearly 50%.  </p>
 
 <p>Using Random Forest algorithm  </p>
 
-<div class="highlight highlight-r"><pre>library(<span class="pl-vo">randomForest</span>)  <span class="pl-c">#Package required to run random forest algorithm</span>
-set.seed(<span class="pl-c1">12345</span>)
+<div class="highlight highlight-r"><pre>library(<span class="pl-vo">randomForest</span>)  <span class="pl-c">#Package required to run random forest algorithm</span></pre></div>
+
+<pre><code>## Warning: package 'randomForest' was built under R version 3.1.2
+</code></pre>
+
+<pre><code>## randomForest 4.6-10
+## Type rfNews() to see new features/changes/bug fixes.
+</code></pre>
+
+<div class="highlight highlight-r"><pre>set.seed(<span class="pl-c1">12345</span>)
 <span class="pl-vo">rfModel</span>      <span class="pl-k">&lt;-</span> randomForest(<span class="pl-vo">classe</span> <span class="pl-k">~</span>. , <span class="pl-v">data</span><span class="pl-k">=</span><span class="pl-vo">harTrng</span>, <span class="pl-v">method</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>class<span class="pl-pds">"</span></span>)
 <span class="pl-vo">rfPrediction</span> <span class="pl-k">&lt;-</span> predict(<span class="pl-vo">rfModel</span>, <span class="pl-vo">harVal</span>, <span class="pl-v">type</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>class<span class="pl-pds">"</span></span>)
 <span class="pl-c">#Plot confusion matrix</span>
 confusionMatrix(<span class="pl-vo">rfPrediction</span>, <span class="pl-vo">harVal</span><span class="pl-k">$</span><span class="pl-vo">classe</span>)</pre></div>
+
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    A    B    C    D    E
+##          A 1115    4    0    0    0
+##          B    1  755   10    0    0
+##          C    0    0  674   10    0
+##          D    0    0    0  633    1
+##          E    0    0    0    0  720
+## 
+## Overall Statistics
+##                                           
+##                Accuracy : 0.9934          
+##                  95% CI : (0.9903, 0.9957)
+##     No Information Rate : 0.2845          
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+##                                           
+##                   Kappa : 0.9916          
+##  Mcnemar's Test P-Value : NA              
+## 
+## Statistics by Class:
+## 
+##                      Class: A Class: B Class: C Class: D Class: E
+## Sensitivity            0.9991   0.9947   0.9854   0.9844   0.9986
+## Specificity            0.9986   0.9965   0.9969   0.9997   1.0000
+## Pos Pred Value         0.9964   0.9856   0.9854   0.9984   1.0000
+## Neg Pred Value         0.9996   0.9987   0.9969   0.9970   0.9997
+## Prevalence             0.2845   0.1935   0.1744   0.1639   0.1838
+## Detection Rate         0.2842   0.1925   0.1718   0.1614   0.1835
+## Detection Prevalence   0.2852   0.1953   0.1744   0.1616   0.1835
+## Balanced Accuracy      0.9988   0.9956   0.9911   0.9921   0.9993
+</code></pre>
 
 <p>We observe that the Random Forest algorithm gives the highest prediction accuracy amongst the three models. The model accuracy is 99.34% and the out of sample error is estimated at 0.66% which is the lowest amongst the three models we have tried.  </p>
 
@@ -173,8 +334,14 @@ confusionMatrix(<span class="pl-vo">rfPrediction</span>, <span class="pl-vo">har
 
 <div class="highlight highlight-r"><pre><span class="pl-vo">prediction</span> <span class="pl-k">&lt;-</span> predict(<span class="pl-vo">rfModel</span>, <span class="pl-vo">harTest</span>, <span class="pl-v">type</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>class<span class="pl-pds">"</span></span>)
 <span class="pl-c">#Display the 20 predicted values of classe for the test dataset </span>
-<span class="pl-vo">prediction</span>
-<span class="pl-c">#Function to create files for loading data</span>
+<span class="pl-vo">prediction</span></pre></div>
+
+<pre><code>##  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 
+##  B  A  B  A  A  E  D  B  A  A  B  C  B  A  E  E  A  B  B  B 
+## Levels: A B C D E
+</code></pre>
+
+<div class="highlight highlight-r"><pre><span class="pl-c">#Function to create files for loading data</span>
 <span class="pl-v">pml_write_files</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-vo">x</span>){
   <span class="pl-v">n</span> <span class="pl-k">=</span> length(<span class="pl-vo">x</span>)
   <span class="pl-k">for</span>(<span class="pl-vo">i</span> <span class="pl-k">in</span> <span class="pl-c1">1</span><span class="pl-k">:</span><span class="pl-vo">n</span>){
